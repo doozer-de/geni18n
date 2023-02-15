@@ -31,12 +31,12 @@ type Pair struct {
 	Value string
 }
 
-// ByKey sort Pairs by Key
-type ByKey []Pair
+// byKey sort Pairs by Key
+type byKey []Pair
 
-func (v ByKey) Len() int           { return len(v) }
-func (v ByKey) Less(i, j int) bool { return v[i].Key < v[j].Key }
-func (v ByKey) Swap(i, j int)      { v[i], v[j] = v[j], v[i] }
+func (v byKey) Len() int           { return len(v) }
+func (v byKey) Less(i, j int) bool { return v[i].Key < v[j].Key }
+func (v byKey) Swap(i, j int)      { v[i], v[j] = v[j], v[i] }
 
 // Pkg returns go package name
 func Pkg(dir string) (string, error) {
@@ -98,10 +98,10 @@ func Generate(fname string) error {
 	for k, v := range tr {
 		t.Pairs = append(t.Pairs, Pair{Key: k, Value: v})
 	}
-	sort.Sort(ByKey(t.Pairs))
+	sort.Sort(byKey(t.Pairs))
 
-	buf := &bytes.Buffer{}
-	if err := template.Must(template.New("").Parse(codeTmpl)).Execute(buf, t); err != nil {
+	var buf bytes.Buffer
+	if err := template.Must(template.New("").Parse(codeTmpl)).Execute(&buf, t); err != nil {
 		return err
 	}
 
